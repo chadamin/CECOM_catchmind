@@ -1,25 +1,19 @@
-let classifier;
-let isGameOver = false;
+const AI = {
+  model: null,
 
-function initAI() {
-  console.log("AI 로딩 시작");
-  classifier = ml5.imageClassifier('DoodleNet', () => {
-    console.log("AI 로드 완료");
-  });
-}
+  init() {
+    this.model = ml5.imageClassifier('DoodleNet', () => {
+      console.log('AI 모델 준비 완료');
+    });
+  },
 
-function submitDrawing() {
-  if (isGameOver) return;
-  isGameOver = true;
-  stopTimer();
-  showLoading();
-
-  classifier.classify(canvas.elt, (err, results) => {
-    if (err) {
-      console.error(err);
-      showFallback();
-      return;
-    }
-    showResult(results);
-  });
-}
+  classify(canvas, callback) {
+    this.model.classify(canvas, (err, results) => {
+      if (err) {
+        alert('AI 분석 실패');
+        return;
+      }
+      callback(results);
+    });
+  }
+};

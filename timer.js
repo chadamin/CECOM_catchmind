@@ -1,26 +1,29 @@
-let timeLeft = 20;
-let timerInterval;
+const Timer = {
+  time: 20,
+  interval: null,
 
-function startTimer() {
-  clearInterval(timerInterval);
-  timeLeft = 20;
-  updateTimerUI();
+  start() {
+    this.stop();
+    this.time = 20;
+    document.getElementById('timer').innerText = this.time;
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerUI();
+    this.interval = setInterval(() => {
+      this.time--;
+      document.getElementById('timer').innerText = this.time;
 
-    if (timeLeft === 0) {
-      submitDrawing();
-    }
-  }, 1000);
-}
+      if (this.time <= 0) {
+        Game.submit();
+      }
+    }, 1000);
+  },
 
-function stopTimer() {
-  clearInterval(timerInterval);
-}
+  stop() {
+    if (this.interval) clearInterval(this.interval);
+  },
 
-function updateTimerUI() {
-  const timer = document.getElementById("timer");
-  timer.innerText = timeLeft;
-}
+  reset() {
+    this.stop();
+    this.time = 20;
+    document.getElementById('timer').innerText = this.time;
+  }
+};

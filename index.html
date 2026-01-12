@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 캐치마인드 - 도전!</title>
+  <title>AI 캐치마인드</title>
 
   <!-- p5 / ml5 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
@@ -12,168 +12,70 @@
   <style>
     body {
       text-align: center;
-      font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+      font-family: 'Malgun Gothic', sans-serif;
       background-color: #eef2f7;
-      margin: 0;
-      padding: 20px;
+      padding: 30px;
     }
 
-    h1 {
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    .instructions {
-      color: #666;
-      margin-bottom: 25px;
-    }
-
-    /* 공통 화면 */
-    .screen {
-      display: none;
-    }
-
-    /* 시작 화면 */
-    #start-screen {
-      display: block;
-      margin-top: 80px;
-    }
-
-    #start-screen button {
-      font-size: 22px;
-      padding: 18px 40px;
-      border-radius: 12px;
-      background-color: #34495e;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    /* 게임 화면 */
-    #game-screen {
-      margin-top: 20px;
-    }
-
-    .stats {
-      font-size: 22px;
-      margin: 20px;
-      color: #444;
-    }
-
-    #timer {
-      color: #e74c3c;
-      font-weight: bold;
-      font-size: 32px;
-    }
-
-    #canvas-container {
-      margin: 0 auto;
-      border: 8px solid #2c3e50;
-      border-radius: 15px;
-      width: 400px;
-      height: 400px;
-      overflow: hidden;
-      background-color: white;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-
-    .button-group {
-      margin-top: 20px;
-    }
-
-    button {
-      padding: 12px 25px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      margin: 0 6px;
-    }
-
-    .btn-submit {
-      background-color: #3498db;
-      color: white;
-    }
-
-    .btn-reset {
-      background-color: #95a5a6;
-      color: white;
-    }
-
-    /* 결과 화면 */
+    #game-screen { display: none; }
     #result-screen {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(44, 62, 80, 0.95);
+      background: rgba(0,0,0,0.85);
       color: white;
-      z-index: 1000;
       justify-content: center;
       align-items: center;
       flex-direction: column;
     }
 
-    #result-text {
-      font-size: 42px;
-      color: #f1c40f;
-      margin-bottom: 15px;
+    #canvas-container {
+      margin: 20px auto;
+      width: 400px;
+      height: 400px;
+      border: 6px solid #333;
+      background: white;
     }
 
-    #ai-thought {
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-
-    .btn-retry {
-      background-color: #2ecc71;
-      color: white;
-      padding: 15px 40px;
-      font-size: 20px;
-      border-radius: 10px;
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      margin: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- 🎮 시작 화면 -->
-  <div id="start-screen" class="screen">
+  <!-- 시작 화면 -->
+  <div id="start-screen">
     <h1>🎨 AI 캐치마인드</h1>
-    <p class="instructions">
-      머릿속으로 단어 하나를 정하고<br />
-      20초 안에 그려보세요!
-    </p>
-
-    <button onclick="startGame()">🎮 게임 시작하기</button>
+    <p>20초 안에 그림을 그려보세요!</p>
+    <button onclick="Game.start()">🎮 게임 시작</button>
   </div>
 
-  <!-- 🕹 게임 화면 -->
-  <div id="game-screen" class="screen">
-    <div class="stats">
-      남은 시간: <span id="timer">20</span>초
-    </div>
-
+  <!-- 게임 화면 -->
+  <div id="game-screen">
+    <h2>남은 시간: <span id="timer">20</span>초</h2>
     <div id="canvas-container"></div>
-
-    <div class="button-group">
-      <button class="btn-submit" onclick="submitDrawing()">제출하기</button>
-      <button class="btn-reset" onclick="resetGame()">다시 그리기</button>
-    </div>
+    <button onclick="Game.submit()">제출하기</button>
+    <button onclick="Game.reset()">다시 그리기</button>
   </div>
 
-  <!-- 🤖 결과 화면 -->
-  <div id="result-screen" class="screen">
-    <div id="result-text">AI 분석 결과</div>
+  <!-- 결과 화면 -->
+  <div id="result-screen">
+    <h1 id="result-text"></h1>
     <p id="ai-thought"></p>
-    <button class="btn-retry" onclick="restart()">다시 도전하기</button>
+    <button onclick="Game.restart()">다시 도전</button>
   </div>
 
-  <!-- JS -->
-  <script src="sketch.js"></script>
+  <!-- JS 로드 순서 중요 -->
+  <script src="canvas.js"></script>
   <script src="timer.js"></script>
   <script src="ai.js"></script>
-  <script src="ui.js"></script>
+  <script src="game.js"></script>
+  <script src="sketch.js"></script>
 
 </body>
 </html>
