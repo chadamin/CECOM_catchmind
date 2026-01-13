@@ -11,7 +11,7 @@ const Canvas = {
       mouseY >= 0 && mouseY <= height
     ) {
       stroke(0);
-      strokeWeight(12);
+      strokeWeight(7);
       line(mouseX, mouseY, pmouseX, pmouseY);
       this.hasDrawn = true; // ✨ 그림이 하나라도 그려졌음
     }
