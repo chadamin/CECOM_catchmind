@@ -10,7 +10,7 @@ const Game = {
     Timer.start();
   },
 
-  submit() {
+  async submit() {
     if (!this.isPlaying) return;
 
     this.isPlaying = false;
@@ -20,24 +20,55 @@ const Game = {
 
     // ✨ 아무것도 안 그린 경우
     if (!Canvas.hasDrawn) {
-        document.getElementById('result-text').innerText = '그림 없음';
-        document.getElementById('ai-thought').innerText =
+      document.getElementById('result-text').innerText = '그림 없음';
+      document.getElementById('ai-thought').innerText =
         '아직 아무것도 그리지 않았어요 😅';
-        return;
+      return;
     }
 
-    // ✨ 그린 게 있는 경우만 AI 분석
-    document.getElementById('result-text').innerText = 'AI 분석 중...';
+    // ✨ 서버 CLIP 분석 시작
+    document.getElementById('result-text').innerText = 'AI 생각 중...';
+    document.getElementById('ai-thought').innerText = '';
 
-    AI.classify(Canvas.get(), this.showResult);
+    const canvas = Canvas.get();
+
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append('image', blob, 'draw.png');
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/clip-test', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error('Server error');
+        }
+
+        const data = await response.json();
+        this.showResult(data);
+
+      } catch (error) {
+        document.getElementById('result-text').innerText = '오류';
+        document.getElementById('ai-thought').innerText =
+          'AI 서버와 연결할 수 없어요 😢';
+      }
+    });
   },
 
+  showResult(data) {
+    const { guess, confidence } = data;
 
-  showResult(results) {
-    const guess = results[0].label.replace(/_/g, ' ');
-    document.getElementById('result-text').innerText = 'AI의 판단';
-    document.getElementById('ai-thought').innerText =
-      `혹시 "${guess}"을(를) 그렸나요?`;
+    document.getElementById('result-text').innerText = 'AI의 추측';
+
+    if (confidence >= 0.8) {
+      document.getElementById('ai-thought').innerText =
+        `이건 거의 "${guess}" 같은데요?`;
+    } else {
+      document.getElementById('ai-thought').innerText =
+        `혹시 "${guess}"을(를) 그렸나요?`;
+    }
   },
 
   reset() {
@@ -51,6 +82,3 @@ const Game = {
     document.getElementById('start-screen').style.display = 'block';
   }
 };
-
-// AI 모델은 페이지 로드 시 한 번만 초기화
-window.onload = () => AI.init();
